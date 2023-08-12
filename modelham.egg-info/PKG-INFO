@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: modelham
+Version: 0.1
+Summary: A QM package for model Hamiltonian.
+Home-page: http://github.com/ZhaoYilin/modelham
+Author: Yilin Zhao
+Author-email: zhaoyilin1991@gmail.com
+License: MIT
+License-File: LICENSE
+License-File: AUTHORS
