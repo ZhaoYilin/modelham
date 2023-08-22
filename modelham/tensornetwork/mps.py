@@ -2,40 +2,70 @@ import numpy as np
 import math
 import copy
 
-class MPS(object):
-    """
-    Class for matrix product state(MPS)
-    Base class for the general tensor network states(TNS): MPS, TTNW, PEPS, MERA, etc.
+from modelham.symmetry import QuantumNumber
+from modelham.tensornetwork.general import Vertex, Edge, HalfEdge
 
-    TNS(U) := (V,E,H)
-    V: set of vertices V= {U_i : i = 1,...,K}. K is the number of vertices.
-    E: set of virtual indices dimension E = {m1,m2,...m_}. 
+class MPS(object):
+    """ Class for matrix product state(MPS)
+
+    MPS(U) := (V,E,H)
     H: set of physical indices H = {alpha_1,alpha_2,...,alpha_N}
     """
-
-    def __init__(self,site,N,D,MPS_Type='MPS'):
-        """ Initialize a tensor network states.
+    def __init__(self, vertices, edges, half_edges):
+        """ Initialize a matrix product states.
 
         Parameters
-        __________
-        sites: modelham.sites.SpinOneHalfSite
-            object of sites class eg. SpinOneHalf SpinOne Spinless
+        ----------
+        vertices: List[Vertice]
+            List of vertices V= {U_i : i = 1,...,K}. K is the number of vertices.
 
-        N: int
-            number of sites
-
-        d: int
-            dimension of physical indices 
-
-        D: int
-            maximum diemsion of virtual indices
+        indices: List[Indice]
+            List of of virtual indices dimension E = {m1,m2,...m_}. 
         """
-        self.d = site.dim
-        self.N = N
-        self.D = D
-        self.MPS_Type = MPS_Type
-        self._initializer(MPS_Type)
+        self.vertices = vertices
+        self.edges = edges
+        self.half_edges = half_edges
+        self.N = len(vertices)
+
+    def __add__(self, other):
+        return other
+
+    def __sub__(self, other):
+        return other
+
+    def __neg__(self):
+        return None
+
+    def __eq__(self, other):
+        return other
+
+    def __hash__(self):
+        return None
+
+    def __repr__(self):
+        return None
+
+    @classmethod
+    def build_random(cls, site, N, target, low=0, high=1):
+        """Construct unfused MPS from MPSInfo, with random matrix elements.
+
+        site: Site
         
+        """
+        vacuum = QuantumNumber(0,0,0)
+        sites = [site]*N
+        vertices = [None] * N
+        physical_indices = HalfEdge.pyscial(sites)
+        virtual_indices = Edge.virtual(vacuum, target, sites)
+
+        for i in range(N):
+            indices = []
+            indices.append(virtual_indices[i])
+            indices.append(physical_indices[i])
+            indices.append(virtual_indices[i+1])
+            vertices[i] = Vertex.random(indices)
+        return cls(vertices=vertices)
+
     def _initializer(self,MPS_Type):
         """
         Initialize a matrix product state
@@ -199,17 +229,20 @@ class MPS(object):
         norm of a MPS, return back a scalar
         """
         pass
+
     def norm_vertice(self,i,direction):
         """
         Get the norm of vertice i
 
         """
         pass
+
     def norm_left(self,index):
         """
         Calculate the norm of the MPS on the left side of vertice i 
         """
         pass
+
     def norm_right(self,index):
         """
         Calculate the norm of the MPS on the right side of vertice i 

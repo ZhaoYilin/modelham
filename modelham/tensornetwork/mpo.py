@@ -37,9 +37,9 @@ class MPO(object):
         P = self.P
         N = self.N
         site = self.site
-        iden = site.operators["id"]
-        s_x = site.operators["s_x"]
-        s_z = site.operators["s_z"]
+        Id = site.operators["Id"]
+        Sx = site.operators["Sx"]
+        Sz = site.operators["Sz"]
 
         vertices = []
 
@@ -49,17 +49,17 @@ class MPO(object):
 
         #Left-hand edge is 1x5 matrix
         #[[I,   J*Sz,  -h*Sx]]
-        row[0,:, :,0] = iden[:, :]
-        row[0,:, :,1] = P['J']*s_z[:, :]
-        row[0,:, :,2] = -P['h']*s_x[:, :]
+        row[0,:, :,0] = Id[:, :]
+        row[0,:, :,1] = P['J']*Sz[:, :]
+        row[0,:, :,2] = -P['h']*Sx[:, :]
 
         #Right-hand edge is 5x1 matrix
         #[[-hSx],
         #[Sz],
         #[I]]
-        column[0,:, :,0] = -P['h']*s_x[:, :]
-        column[1,:, :,0] = s_z[:, :]
-        column[2,:, :,0] = iden[:, :]
+        column[0,:, :,0] = -P['h']*Sx[:, :]
+        column[1,:, :,0] = Sz[:, :]
+        column[2,:, :,0] = Id[:, :]
 
         #Bulk Hamiltonian MPO
         #[I,    J*Sz,   -h*Sx]
@@ -69,7 +69,7 @@ class MPO(object):
         matrix[:, :, :, 2] = column[:, 0]
 
         vertices.append(row[:, :])
-        for i in range(1, N-1):
+        for _ in range(1, N-1):
             vertices.append(matrix[:, :, :, :])
         vertices.append(column[:, :])
 
@@ -91,10 +91,10 @@ class MPO(object):
         P = self.P
         N = self.N
         site = self.site
-        iden = site.operators["id"]
-        s_p = site.operators["s_p"]
-        s_m = site.operators["s_m"]
-        s_z = site.operators["s_z"]
+        Id = site.operators["Id"]
+        Sp = site.operators["Sp"]
+        Sm = site.operators["Sm"]
+        Sz = site.operators["Sz"]
 
         vertices = []
         
@@ -103,11 +103,11 @@ class MPO(object):
         matrix = np.zeros((5, 5, 2, 2))
         #Left-hand edge is 1x5 matrix
         #[[I,   0.5J*Sp,  0.5J*Sm, Jz*Sz,  h*Sz]]
-        row[0, 0, :, :] = iden[:, :]
-        row[0, 1, :, :] = P['J'] / 2. * s_p[:, :]
-        row[0, 2, :, :] = P['J'] / 2. * s_m[:, :]
-        row[0, 3, :, :] = P['Jz'] * s_z[:, :]
-        row[0, 4, :, :] = - P['h'] * s_z[:, :]
+        row[0, 0, :, :] = Id[:, :]
+        row[0, 1, :, :] = P['J'] / 2. * Sp[:, :]
+        row[0, 2, :, :] = P['J'] / 2. * Sm[:, :]
+        row[0, 3, :, :] = P['Jz'] * Sz[:, :]
+        row[0, 4, :, :] = - P['h'] * Sz[:, :]
 
         #Right-hand edge is 5x1 matrix
         #[[-h*Sz],
@@ -115,11 +115,11 @@ class MPO(object):
         #[Sp],
         #[Sz],
         #[I]]
-        column[0, 0, :, :] = - P['h'] * s_z[:, :]
-        column[1, 0, :, :] = s_m[:, :]
-        column[2, 0, :, :] = s_p[:, :]
-        column[3, 0, :, :] = s_z[:, :]
-        column[4, 0, :, :] = iden[:, :]
+        column[0, 0, :, :] = - P['h'] * Sz[:, :]
+        column[1, 0, :, :] = Sm[:, :]
+        column[2, 0, :, :] = Sp[:, :]
+        column[3, 0, :, :] = Sz[:, :]
+        column[4, 0, :, :] = Id[:, :]
 
         #Bulk Hamiltonian MPO
         #[I,    J*Sp,   J*Sm,   Jz*Sz,  -h*Sz]
@@ -132,7 +132,7 @@ class MPO(object):
 
         #The whole MPO
         vertices.append(row[:, :])
-        for i in range(1, N-1):
+        for _ in range(1, N-1):
             vertices.append(matrix[:, :, :, :])
         vertices.append(column[:, :])
 

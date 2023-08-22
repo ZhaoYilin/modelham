@@ -1,5 +1,5 @@
 import numpy as np
-import modelham.tn.auxiliary as auxiliary 
+import modelham.tensornetwork.auxiliary as auxiliary 
 
 class Optimizer(object):
     """
